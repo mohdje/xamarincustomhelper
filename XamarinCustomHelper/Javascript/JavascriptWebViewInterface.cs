@@ -6,6 +6,9 @@ using XamarinCustomHelper.Activities;
 
 namespace XamarinCustomHelper.Javascript
 {
+    /// <summary>
+    /// A base class to build an interface to call C# code from Web View's Javascript code
+    /// </summary>
     public abstract class JavascriptWebViewInterface : Java.Lang.Object
     {
         protected WebViewActivity Context { get; }
@@ -14,7 +17,10 @@ namespace XamarinCustomHelper.Javascript
         {
             Context = context;
         }
-
+        /// <summary>
+        /// The interface name to use in Web View's Javascript code
+        /// </summary>
+        /// <returns></returns>
         public abstract string InterfaceName();
     }
 }

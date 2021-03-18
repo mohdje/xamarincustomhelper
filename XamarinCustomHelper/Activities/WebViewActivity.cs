@@ -9,6 +9,9 @@ using XamarinCustomHelper.Javascript;
 
 namespace XamarinCustomHelper.Activities
 {
+    /// <summary>
+    /// A base class to build WebView based activity
+    /// </summary>
     public abstract class WebViewActivity : Activity
     {
         private WebView _webView;
@@ -36,15 +39,26 @@ namespace XamarinCustomHelper.Activities
 
             _webView.LoadUrl(this.GetUrl());
         }
-
+        /// <summary>
+        /// Url of the web view page
+        /// </summary>
+        /// <returns></returns>
         protected abstract string GetUrl();
-
+        /// <summary>
+        /// Array of Javascript interfaces to bind with the WebView's activity
+        /// </summary>
+        /// <returns></returns>
         protected abstract Javascript.JavascriptWebViewInterface[] GetJavascriptInterfaces();
-
+        /// <summary>
+        /// The xaml resource to bind to the activity
+        /// </summary>
+        /// <returns></returns>
         protected abstract int GetLayoutResource();
-
+        /// <summary>
+        /// The WebView resource id 
+        /// </summary>
+        /// <returns></returns>
         protected abstract int GetWebViewId();
-
 
         public JavascriptResult ExecuteJavaScript(string script)
         {

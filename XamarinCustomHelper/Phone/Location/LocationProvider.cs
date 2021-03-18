@@ -6,10 +6,17 @@ using Xamarin.Essentials;
 
 namespace XamarinCustomHelper.Phone.Location
 {
+    /// <summary>
+    /// A class to provide device location
+    /// </summary>
     public class LocationProvider
     {
         private ILocationPermissionRequest _activity;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="activity">an Android Activity that implements ILocationPermissionRequest</param>
         public LocationProvider(ILocationPermissionRequest activity)
         {
             _activity = activity;
@@ -20,7 +27,11 @@ namespace XamarinCustomHelper.Phone.Location
                 System.Threading.Thread.Sleep(1000);
             }
         }
-
+        /// <summary>
+        /// Retrieve device location
+        /// </summary>
+        /// <param name="attempts">number of attempts to get device location</param>
+        /// <returns></returns>
         public LocationResult GetLocation(int attempts)
         {
             var request = new GeolocationRequest(GeolocationAccuracy.Best, TimeSpan.FromSeconds(5));
@@ -30,16 +41,10 @@ namespace XamarinCustomHelper.Phone.Location
             try
             {
                 location = Geolocation.GetLocationAsync(request).Result;
-
             }
             catch (Exception ex)
             {
-                if (ex.InnerException is FeatureNotEnabledException)
-                    return new LocationResult(null, "La récupération de votre position a échoué. Vérifiez que la géolocalisation de votre appareil est activée");
-                else if (ex.InnerException is PermissionException)
-                    return new LocationResult(null, "La récupération de votre position a échoué. La permission d'accès à la position de votre appareil a été refusée.");
-                else
-                    return new LocationResult(null, "Une erreur est survenue lors de la récupération de votre position a échoué.");
+                return new LocationResult(ex);
             }
 
             attempts--;
@@ -52,10 +57,10 @@ namespace XamarinCustomHelper.Phone.Location
                     return GetLocation(attempts);
                 }
                 else
-                    return new LocationResult(null, "Les tentatives de récupération de votre position ont échoué.");
+                    return new LocationResult(new Exception("Les tentatives de récupération de votre position ont échoué."));
             }
 
-            return new LocationResult(location, string.Empty);
+            return new LocationResult(location);
         }
     }
 
@@ -63,12 +68,21 @@ namespace XamarinCustomHelper.Phone.Location
     {
         public Xamarin.Essentials.Location Location { get; }
 
-        public string ExecptionMessage { get; }
+        public string ExceptionMessage { get; }
 
-        public LocationResult(Xamarin.Essentials.Location location, string exceptionMessage)
+        public LocationResult(Xamarin.Essentials.Location location)
         {
             this.Location = location;
-            this.ExecptionMessage = exceptionMessage;
+        }
+
+        public LocationResult(Exception exception)
+        {
+            if (exception.InnerException is FeatureNotEnabledException)
+                ExceptionMessage = "La récupération de votre position a échoué. Vérifiez que la géolocalisation de votre appareil est activée";
+            else if (exception.InnerException is PermissionException)
+                ExceptionMessage = "La récupération de votre position a échoué. La permission d'accès à la position de votre appareil a été refusée.";
+            else
+                ExceptionMessage = "Une erreur est survenue lors de la récupération de votre position a échoué.";
         }
     }
 }

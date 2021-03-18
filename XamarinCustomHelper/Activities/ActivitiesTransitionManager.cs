@@ -7,13 +7,28 @@ using System.Threading.Tasks;
 
 namespace XamarinCustomHelper.Activities
 {
+    /// <summary>
+    /// A static class to manage transition between activities
+    /// </summary>
     public static class ActivitiesTransitionManager
     {
+        /// <summary>
+        /// Finish the current activity and re-start previous activity
+        /// </summary>
+        /// <param name="context">the active activity</param>
         public static void GoToPreviousActivity(Activity context)
         {
             context.Finish();
         }
-
+        /// <summary>
+        /// Start a new activity with a transition
+        /// </summary>
+        /// <param name="context">the current activity</param>
+        /// <param name="nextActivityType">the activity type to start</param>
+        /// <param name="finishActivity">true if the current activity should be finished, false if it should be paused</param>
+        /// <param name="bundleValues">values to pass to the activity to start</param>
+        /// <param name="nextActivityStartingAnimation">animation id for the activity to start</param>
+        /// <param name="currentActivityEndingAnimation">animation id for the activity to stop</param>
         public static void SwitchToActivity(
             Activity context,
             Type nextActivityType,

@@ -10,6 +10,9 @@ using XamarinCustomHelper.Phone.Location;
 
 namespace XamarinCustomHelper.Javascript
 {
+    /// <summary>
+    /// A Javascript interface to use native features of the device
+    /// </summary>
     public class JavascriptPhoneInterface : JavascriptWebViewInterface
     {
         public JavascriptPhoneInterface(WebViewActivity context) : base(context) 
@@ -35,7 +38,7 @@ namespace XamarinCustomHelper.Javascript
             if (phoneLocation.Location != null)
                 result = JsonHelper.ToJson(new { Lat = phoneLocation.Location.Latitude, Lng = phoneLocation.Location.Longitude });
             else
-                ShowToastMessage(phoneLocation.ExecptionMessage);
+                ShowToastMessage(phoneLocation.ExceptionMessage);
 
             return result;
         }

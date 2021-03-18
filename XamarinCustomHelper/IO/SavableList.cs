@@ -8,6 +8,11 @@ using XamarinCustomHelper.IO.Serialization;
 
 namespace XamarinCustomHelper.IO
 {
+    /// <summary>
+    /// A base class to build an encapsulated serializer of an objects list.
+    /// Inherit from it to build a class that will save a list of object in the device
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public abstract class SavableList<T> : SerializerWrapper where T : class, new()
     {
         protected List<T> _list;
@@ -22,7 +27,10 @@ namespace XamarinCustomHelper.IO
             if (list != null)
                 _list.AddRange(list);
         }
-
+        /// <summary>
+        /// Add an element of type T in the list and save it 
+        /// </summary>
+        /// <param name="element"></param>
         public void Add(T element)
         {
             string errorMessage;
@@ -34,7 +42,10 @@ namespace XamarinCustomHelper.IO
 
             _serializer.Save(GetSerializationFileName(), _list.ToArray());
         }
-
+        /// <summary>
+        /// Add an array of elements of type T in the list and save it 
+        /// </summary>
+        /// <param name="element"></param>
         public void AddRange(T[] elements)
         {
             string errorMessage;
@@ -46,7 +57,11 @@ namespace XamarinCustomHelper.IO
 
             _serializer.Save(GetSerializationFileName(), _list.ToArray());
         }
-
+        /// <summary>
+        /// Replace the element that matches the predicate by a new element and save the list
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <param name="newElement"></param>
         public void Replace(Predicate<T> predicate, T newElement)
         {
             var index = _list.FindIndex(predicate);
@@ -58,7 +73,10 @@ namespace XamarinCustomHelper.IO
 
             _serializer.Save(GetSerializationFileName(), _list.ToArray());
         }
-
+        /// <summary>
+        /// Remove the element that matches the predicate and save the list
+        /// </summary>
+        /// <param name="predicate"></param>
         public void Remove(Predicate<T> predicate)
         {
             int index = _list.FindIndex(predicate);
@@ -70,7 +88,10 @@ namespace XamarinCustomHelper.IO
 
             _serializer.Save(GetSerializationFileName(), _list.ToArray());
         }
-
+        /// <summary>
+        /// Retrieve all elements as an array
+        /// </summary>
+        /// <returns></returns>
         public T[] GetElements()
         {
             return _list.ToArray();
