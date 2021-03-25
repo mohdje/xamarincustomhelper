@@ -6,6 +6,7 @@ using System.Linq;
 using System.IO;
 using System.Text;
 using XamarinCustomHelper.IO.Serialization;
+using System.Xml.Serialization;
 
 namespace XamarinCustomHelper.IO
 {
@@ -20,11 +21,6 @@ namespace XamarinCustomHelper.IO
             _context = context;
         }
 
-        public AndroidXmlSerializer()
-        {
-
-        }
-      
         /// <summary>
         /// Serialize an object an save it in a Xml file on the Android device
         /// </summary>
@@ -33,17 +29,10 @@ namespace XamarinCustomHelper.IO
         /// <param name="objectToSave">the object to save</param>
         public void Save<T>(string fileName, T objectToSave)
         {
-            try
+            var xs = new XmlSerializer(typeof(T));
+            using (Stream fs = _context.OpenFileOutput(fileName, FileCreationMode.Private))
             {
-                var xs = new System.Xml.Serialization.XmlSerializer(typeof(T));
-                using (Stream fs = _context.OpenFileOutput(fileName, FileCreationMode.Private))
-                {
-                    xs.Serialize(fs, objectToSave);
-                }
-            }
-            catch (Exception)
-            {
-                throw new Exception("An error occured during serialization");
+                xs.Serialize(fs, objectToSave);
             }
         }
         /// <summary>
@@ -54,7 +43,7 @@ namespace XamarinCustomHelper.IO
         /// <returns></returns>
         public T Load<T>(string fileName) where T : class
         {
-            var xs = new System.Xml.Serialization.XmlSerializer(typeof(T));
+            var xs = new XmlSerializer(typeof(T));
             T element = null;
 
             var files = _context.FileList();
@@ -62,16 +51,27 @@ namespace XamarinCustomHelper.IO
             if (!files.Contains(fileName))
                 return null;
 
-            try
+            using (Stream fs = _context.OpenFileInput(fileName))
             {
-                using (Stream fs = _context.OpenFileInput(fileName))
-                {
-                    element = xs.Deserialize(fs) as T;
-                }
+                element = xs.Deserialize(fs) as T;
             }
-            catch(Exception ex)
+
+            return element;
+        }
+        /// <summary>
+        /// Deserialize an object from a static resource file (asset)
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public T LoadStaticResource<T>(string fileName) where T : class
+        {
+            XmlSerializer xs = new XmlSerializer(typeof(T));
+
+            T element = null;
+            using (Stream fs = _context.Assets.Open(fileName))
             {
-                throw new Exception("An error occured during deserialization");
+                element = xs.Deserialize(fs) as T;
             }
 
             return element;
