@@ -57,8 +57,10 @@ namespace XamarinCustomHelper.Activities
 
             context.StartActivity(intent, options.ToBundle());
 
+            //if (finishActivity)
+            //    Task.Delay(1000).ContinueWith((t) => context.Finish());
             if (finishActivity)
-                Task.Delay(1000).ContinueWith((t) => context.Finish());
+                context.FinishAfterTransition();
         }
     }
 }
