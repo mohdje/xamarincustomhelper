@@ -15,22 +15,18 @@ namespace XamarinCustomHelper.Phone
             alarmManager = (AlarmManager)context.GetSystemService(Context.AlarmService);
         }
 
-        public void ScheduleTask(DateTime executingTime, PendingIntent pendingIntent, int executionDelayAllowed = 60000)
+        public void ScheduleTask(DateTime executingTime, PendingIntent pendingIntent)
         {
             TimeSpan timeSpan = executingTime - DateTime.Now;
-            ScheduleTask(timeSpan, pendingIntent, executionDelayAllowed);
+            ScheduleTask(timeSpan, pendingIntent);
         }
 
-        public void ScheduleTask(TimeSpan timeSpan, PendingIntent pendingIntent, int executionDelayAllowed = 60000)
+        public void ScheduleTask(TimeSpan timeSpan, PendingIntent pendingIntent)
         {
-            Calendar calendar = Calendar.Instance;
-            calendar.TimeInMillis = Java.Lang.JavaSystem.CurrentTimeMillis();
-            calendar.Add(CalendarField.Hour, timeSpan.Hours);
-            calendar.Add(CalendarField.Minute, timeSpan.Minutes);
-            calendar.Add(CalendarField.Second, timeSpan.Seconds);
+            var triggerAtMillis = Java.Lang.JavaSystem.CurrentTimeMillis() + (long)timeSpan.TotalMilliseconds;
 
             alarmManager.Cancel(pendingIntent);
-            alarmManager.SetWindow(AlarmType.Rtc, calendar.TimeInMillis, executionDelayAllowed, pendingIntent);
+            alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, triggerAtMillis, pendingIntent);
         }
 
         public void CancelTask(PendingIntent pendingIntent)
