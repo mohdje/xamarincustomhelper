@@ -1,9 +1,12 @@
 ﻿using Android.App;
+using Android.Content.PM;
 using Android.OS;
+using Android.Runtime;
 using Android.Views;
 using Android.Webkit;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using XamarinCustomHelper.Javascript;
 
@@ -15,6 +18,8 @@ namespace XamarinCustomHelper.Activities
     public abstract class WebViewActivity : Activity
     {
         private WebView _webView;
+
+        public event EventHandler<string[]> OnPermissionsGranted;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -69,6 +74,20 @@ namespace XamarinCustomHelper.Activities
             });
 
             return result;
+        }
+
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
+        {
+            base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+
+            var grantedPermissions = new List<string>();
+            for (int i = 0; i < permissions.Length; i++)
+            {
+                if (grantResults[i] == Permission.Granted)
+                    grantedPermissions.Add(permissions[i]);
+            }
+
+            OnPermissionsGranted?.Invoke(this, grantedPermissions.ToArray());
         }
     }
 }
