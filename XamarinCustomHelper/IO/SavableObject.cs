@@ -15,26 +15,20 @@ namespace XamarinCustomHelper.IO
     {
         private static T _object;
 
+        public T Object => _object;
+
         public SavableObject(ISerializer serializer) : base(serializer)
         {
             if (_object == null)
                 _object = _serializer.Load<T>(GetSerializationFileName());
         }
         /// <summary>
-        /// Retrieve the object
-        /// </summary>
-        /// <returns></returns>
-        public T GetItem()
-        {
-            return _object;
-        }
-        /// <summary>
         /// Set the object and save it
         /// </summary>
         /// <param name="item"></param>
-        public void SetItem(T item)
+        public void SetObject(T obj)
         {
-            _object = item;
+            _object = obj;
             _serializer.Save(GetSerializationFileName(), _object);
         }
     }
