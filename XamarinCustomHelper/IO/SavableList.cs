@@ -15,7 +15,9 @@ namespace XamarinCustomHelper.IO
     /// <typeparam name="T"></typeparam>
     public abstract class SavableList<T> : SerializerWrapper where T : class, new()
     {
-        protected List<T> _list;
+        protected static List<T> _list;
+
+        public T[] Elements => _list.ToArray();
         protected abstract bool CheckBeforeAddElement(T element, out string errorMessage);
         protected abstract bool CheckBeforeAddRange(T[] elements, out string errorMessage);
         public SavableList(ISerializer serializer) : base(serializer)
@@ -74,27 +76,17 @@ namespace XamarinCustomHelper.IO
             _serializer.Save(GetSerializationFileName(), _list.ToArray());
         }
         /// <summary>
-        /// Remove the element that matches the predicate and save the list
+        /// Remove the elements that matches the predicate and save the list
         /// </summary>
         /// <param name="predicate"></param>
         public void Remove(Predicate<T> predicate)
         {
-            int index = _list.FindIndex(predicate);
+            int nbRemovedElements = _list.RemoveAll(predicate);
 
-            if (index > -1)
-                _list.RemoveAt(index);
-            else
-                throw new Exception("Removing failed. The element is not in the list.");
+            if (nbRemovedElements == 0)
+                throw new Exception("Removing failed. No element matched the conditions.");
 
             _serializer.Save(GetSerializationFileName(), _list.ToArray());
-        }
-        /// <summary>
-        /// Retrieve all elements as an array
-        /// </summary>
-        /// <returns></returns>
-        public T[] GetElements()
-        {
-            return _list.ToArray();
         }
     }
 }
