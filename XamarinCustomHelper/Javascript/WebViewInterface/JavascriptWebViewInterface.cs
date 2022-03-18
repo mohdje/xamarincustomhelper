@@ -22,5 +22,10 @@ namespace XamarinCustomHelper.Javascript
         /// </summary>
         /// <returns></returns>
         public abstract string InterfaceName();
+
+        protected string ResultJSON(object obj)
+        {
+            return JsonHelper.ToJson(new { Result = obj });
+        }
     }
 }

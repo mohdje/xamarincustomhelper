@@ -89,5 +89,16 @@ namespace XamarinCustomHelper.Activities
 
             OnPermissionsGranted?.Invoke(this, grantedPermissions.ToArray());
         }
+
+        protected void DispacthJavaScriptEvent(string eventName, object obj)
+        {
+            var script = "document.dispatchEvent(new CustomEvent('"+eventName+"', { 'detail': " + JsonHelper.ToJson(obj) + " }));";
+            this.ExecuteJavaScript(script);
+        }
+
+        protected void DispacthOnResumeJavaScriptEvent()
+        {
+            DispacthJavaScriptEvent("activityResumed", null);
+        }
     }
 }

@@ -45,6 +45,32 @@ namespace XamarinCustomHelper.Javascript
 
         [Export]
         [JavascriptInterface]
+        public void GetGpsLocationAsync(string callback)
+        {
+            AsyncCall.ExecuteAsync(this.Context, () =>
+            {
+                var location = new LocationProvider(Context as ILocationPermissionRequest);
+
+                var phoneLocation = location.GetLocation(2);
+
+                string result = string.Empty;
+
+                if (phoneLocation.Location != null)
+                    return new
+                    {
+                        Location = phoneLocation.Location
+                    };
+                else
+                    return new
+                    {
+                        exception = phoneLocation.ExceptionMessage
+                    };
+
+            }, callback);          
+        }
+
+        [Export]
+        [JavascriptInterface]
         public void OpenGoogleMaps(float lat, float lon)
         {
             var coordinates = lat.ToString().Replace(',', '.') + "," + lon.ToString().Replace(',', '.');
@@ -68,6 +94,13 @@ namespace XamarinCustomHelper.Javascript
             var toast = Android.Widget.Toast.MakeText(Context, text, Android.Widget.ToastLength.Long);
 
             toast.Show();
+        }
+
+        [Export]
+        [JavascriptInterface]
+        public void OpenAppSettings()
+        {
+            AppInfo.ShowSettingsUI();
         }
     }
 }
