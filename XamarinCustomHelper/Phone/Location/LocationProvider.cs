@@ -82,7 +82,7 @@ namespace XamarinCustomHelper.Phone.Location
             else if (exception.InnerException is PermissionException)
                 ExceptionMessage = "La récupération de votre position a échoué. La permission d'accès à la position de votre appareil a été refusée.";
             else
-                ExceptionMessage = "Une erreur est survenue lors de la récupération de votre position a échoué.";
+                ExceptionMessage = "La récupération de votre position a échoué.";
         }
     }
 }
