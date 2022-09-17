@@ -4,6 +4,7 @@ using Java.Interop;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Xamarin.Essentials;
 using XamarinCustomHelper.Activities;
 using XamarinCustomHelper.Phone.Location;
@@ -15,6 +16,7 @@ namespace XamarinCustomHelper.Javascript
     /// </summary>
     public class JavascriptPhoneInterface : JavascriptWebViewInterface
     {
+        private CancellationTokenSource cancellationTokenSource;
         public JavascriptPhoneInterface(WebViewActivity context) : base(context) 
         {
 
@@ -47,6 +49,11 @@ namespace XamarinCustomHelper.Javascript
         [JavascriptInterface]
         public void GetGpsLocationAsync(string callback)
         {
+            if (cancellationTokenSource != null)
+                cancellationTokenSource.Cancel();
+
+            cancellationTokenSource = new CancellationTokenSource();
+
             AsyncCall.ExecuteAsync(this.Context, () =>
             {
                 var location = new LocationProvider(Context as ILocationPermissionRequest);
@@ -66,7 +73,7 @@ namespace XamarinCustomHelper.Javascript
                         exception = phoneLocation.ExceptionMessage
                     };
 
-            }, callback);          
+            }, callback, cancellationTokenSource);          
         }
 
         [Export]
@@ -78,13 +85,17 @@ namespace XamarinCustomHelper.Javascript
             Launcher.OpenAsync("http://maps.google.com/?daddr=" + coordinates);
         }
 
+        /// <summary>
+        /// Check if the phone is connected to network
+        /// </summary>
+        /// <returns>0 if no connectivity, 1 if phone is connected</returns>
         [Export]
         [JavascriptInterface]
-        public string CheckConnectivity()
+        public int CheckConnectivity()
         {
             var current = Connectivity.NetworkAccess;
 
-            return current == NetworkAccess.Internet ? "ok" : string.Empty;
+            return current == NetworkAccess.Internet ? 1 : 0;
         }
 
         [Export]
@@ -101,6 +112,13 @@ namespace XamarinCustomHelper.Javascript
         public void OpenAppSettings()
         {
             AppInfo.ShowSettingsUI();
+        }
+
+        [Export]
+        [JavascriptInterface]
+        public void GoToPreviousActivity()
+        {
+            ActivitiesTransitionManager.GoToPreviousActivity(this.Context);
         }
     }
 }
